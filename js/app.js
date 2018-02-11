@@ -1,23 +1,19 @@
 // Enemies our player must avoid
-var maxspeed,minspeeed;
-var Enemy = function(x,y) {
+var maxspeed, minspeeed, inc = 0,
+    level = 0,
+    inclevel = 0;
+var Enemy = function(x, y) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
 
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
-    this.x=x;
-    this.y=y;
-    this.maxspeed=900;
-    this.minspeeed=400;
-    this.speed=this.bugspeed(maxspeed,minspeeed);
-};
-
-Enemy.prototype.bugspeed=function(maxspeed,minspeeed) {
-    return Math.round(Math.random()*(maxspeed-minspeeed+1)+minspeeed);
-    //console.log(Math.round(math.random()*(maxspeed-minspeeed+1)+minspeeed));
-
+    this.x = x;
+    this.y = y;
+    this.maxspeed = 600;
+    this.minspeeed = 200;
+    this.speed = this.bugspeed(maxspeed, minspeeed);
 };
 
 // Update the enemy's position, required method for game
@@ -26,13 +22,19 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-    if(this.x<620) {
-        this.x=this.x+this.speed*dt;
+    if (this.x < 900) {
+        this.x = this.x + (this.speed * dt) + inclevel;
+    } else {
+        this.x = -70;
+        this.speed = this.speed;
     }
-    else {
-        this.x=-70;
-        this.speed=this.speed;
-    }
+};
+
+//use to calculate the speed of enemies
+Enemy.prototype.bugspeed = function(maxspeed, minspeeed) {
+    // reference https://stackoverflow.com/questions/5271598/java-generate-random-number-between-two-given-values
+    return Math.round(Math.random() * (this.maxspeed - this.minspeeed) + this.minspeeed);
+
 };
 
 // Draw the enemy on the screen, required method for game
@@ -41,16 +43,26 @@ Enemy.prototype.render = function() {
 };
 
 
-var Player = function(x,y){
+var Player = function(x, y) {
+    this.sprite = 'images/enemy-bug.png';
+
     this.x = x;
     this.y = y;
-    this.sprite = 'images/char-cat-girl.png';
+    this.speed = 40;
 };
 
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
-Player.prototype.update =function() {
+//detect if the collison has occured or not
+Player.prototype.update = function() {
+    for (var i = 0; i < allEnemies.length; i++) {
+        // help from https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection  used  width 50 here for both the sprite
+        if (this.x < allEnemies[i].x + 50 && this.x + 50 > allEnemies[i].x && this.y < allEnemies[i].y + 50 && this.y + 50 > allEnemies[i].y) {
+            player.startAgain();
+
+        }
+    }
 
 };
 
@@ -61,26 +73,87 @@ Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
+//this function is called when player hits any bug
+Player.prototype.startAgain = function() {
+    if (inc === 0) {
+        var s = confirm('shame!!!You didn\'t even cross level 1!!!do you want to RESTART the game');
+        if (s === false) {
+            window.close();
+        }
+    } else if (inc > 0) {
+        var m = confirm('You only completed level ' + inc + ' !!do you want to RESTART the game');
+        if (m === false) {
+            window.close();
+        }
+
+    }
+
+    this.x = 150;
+    this.y = 350;
+    inc = 0;
+    level = 0;
+    document.getElementById('total').innerHTML = 'Score:' + inc;
+    document.getElementById('level').innerHTML = 'level:' + level;
+
+};
+
+//this function is called when we reach the water
+Player.prototype.Reached = function() {
+    inc = inc + 1;
+    this.x = 150;
+    this.y = 350;
+    if (inc < 3 && inc > 0) {
+        level = 1;
+
+    } else if (inc > 3) {
+        level = level + 1;
+        inclevel = 6; //increase the speed when we hit a score of more then 3
+    }
+    if (level > 5) {
+        window.alert('you won! Have a nice day');
+        this.x = 150;
+        this.y = 350;
+        level = 0;
+        inc = 0;
+    }
+    document.getElementById('total').innerHTML = 'Score:' + inc;
+    document.getElementById('level').innerHTML = 'level:' + level;
+};
+//this function helps to handle events like keyup,keydown etc
 Player.prototype.handleInput = function(keyCode) {
+    if (keyCode == 'left') {
+        if (this.x > 20) {
+            this.x = this.x - this.speed;
+        }
+    } else if (keyCode == 'right') {
+        if (this.x < 390) {
+            this.x = this.x + this.speed;
 
+        }
+    } else if (keyCode == 'up') {
+        this.y = this.y - this.speed;
+        if (this.y < 0) {
+            player.Reached();
+
+        }
+    } else {
+        if (this.y < 430) {
+            this.y = this.y + this.speed;
+
+        }
+    }
 };
 
-
-
-Player.prototype.startAgain=function() {
-    this.x=150;
-    this.y=350;
-    this.sprite = 'images/char-horn-girl.png';
-};
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 var allEnemies = [
-   new Enemy(0,60),
-   new Enemy(0,145),
-   new Enemy(0,230)
+    new Enemy(20, 45),
+    new Enemy(10, 130),
+    new Enemy(12, 220),
+    new Enemy(22, 55)
 ];
-var player = new Player(150,350);
+var player = new Player(150, 280);
 
 
 

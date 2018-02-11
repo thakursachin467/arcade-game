@@ -5,8 +5,19 @@
     <title>Effective JavaScript: Frogger</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-	
+<body onload="Welcome()">
+	<h1 id="total">Score:0</h1>
+	<h1 id="level">level:0</h1>
+	<h4 id="mesg"></h4>
+	<script type="text/javascript">
+		function Welcome() {
+   	 	var person = prompt("Please enter your name");
+   	 	if (person != null) {
+        document.getElementById("mesg").innerHTML =
+        "Hello " + person + "! Please reach level 6 to win";
+    }
+}
+	</script>
     <script src="js/resources.js"></script>
     <script src="js/app.js"></script>
     <script src="js/engine.js"></script>
