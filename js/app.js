@@ -1,13 +1,12 @@
 // Enemies our player must avoid
-var maxspeed, minspeeed, inc = 0,
-    level = 0,
-    inclevel = 0;
+var maxspeed, minspeeed, inclevel=0;
 var Enemy = function(x, y) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
 
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
+    'use strict'; 
     this.sprite = 'images/enemy-bug.png';
     this.x = x;
     this.y = y;
@@ -44,8 +43,10 @@ Enemy.prototype.render = function() {
 
 
 var Player = function(x, y) {
+    'use strict';
     this.sprite = 'images/enemy-bug.png';
-
+    this.inc=0;
+    this.level=0;
     this.x = x;
     this.y = y;
     this.speed = 40;
@@ -59,7 +60,7 @@ Player.prototype.update = function() {
     for (var i = 0; i < allEnemies.length; i++) {
         // help from https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection  used  width 50 here for both the sprite
         if (this.x < allEnemies[i].x + 50 && this.x + 50 > allEnemies[i].x && this.y < allEnemies[i].y + 50 && this.y + 50 > allEnemies[i].y) {
-            player.startAgain();
+            this.startAgain();
 
         }
     }
@@ -75,13 +76,13 @@ Player.prototype.render = function() {
 
 //this function is called when player hits any bug
 Player.prototype.startAgain = function() {
-    if (inc === 0) {
+    if (this.inc === 0) {
         var s = confirm('shame!!!You didn\'t even cross level 1!!!do you want to RESTART the game');
         if (s === false) {
             window.close();
         }
-    } else if (inc > 0) {
-        var m = confirm('You only completed level ' + inc + ' !!do you want to RESTART the game');
+    } else if (this.inc > 0) {
+        var m = confirm('You only completed level ' + this.inc + ' !!do you want to RESTART the game');
         if (m === false) {
             window.close();
         }
@@ -90,34 +91,34 @@ Player.prototype.startAgain = function() {
 
     this.x = 150;
     this.y = 350;
-    inc = 0;
-    level = 0;
-    document.getElementById('total').innerHTML = 'Score:' + inc;
-    document.getElementById('level').innerHTML = 'level:' + level;
+    this.inc = 0;
+    this.level = 0;
+    document.getElementById('total').innerHTML = 'Score:' + this.inc;
+    document.getElementById('level').innerHTML = 'level:' + this.level;
 
 };
 
 //this function is called when we reach the water
 Player.prototype.Reached = function() {
-    inc = inc + 1;
+    this.inc = this.inc + 1;
     this.x = 150;
     this.y = 350;
-    if (inc < 3 && inc > 0) {
-        level = 1;
+    if (this.inc < 3 && this.inc > 0) {
+        this.level = 1;
 
-    } else if (inc > 3) {
-        level = level + 1;
+    } else if (this.inc > 3) {
+        this.level = this.level + 1;
         inclevel = 6; //increase the speed when we hit a score of more then 3
     }
-    if (level > 5) {
+    if (this.level > 5) {
         window.alert('you won! Have a nice day');
         this.x = 150;
         this.y = 350;
-        level = 0;
-        inc = 0;
+        this.level = 0;
+        this.inc = 0;
     }
-    document.getElementById('total').innerHTML = 'Score:' + inc;
-    document.getElementById('level').innerHTML = 'level:' + level;
+    document.getElementById('total').innerHTML = 'Score:' + this.inc;
+    document.getElementById('level').innerHTML = 'level:' + this.level;
 };
 //this function helps to handle events like keyup,keydown etc
 Player.prototype.handleInput = function(keyCode) {
@@ -133,11 +134,11 @@ Player.prototype.handleInput = function(keyCode) {
     } else if (keyCode == 'up') {
         this.y = this.y - this.speed;
         if (this.y < 0) {
-            player.Reached();
+            this.Reached();
 
         }
     } else {
-        if (this.y < 430) {
+        if (this.y < 400) {
             this.y = this.y + this.speed;
 
         }
