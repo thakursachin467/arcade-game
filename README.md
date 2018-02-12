@@ -16,5 +16,5 @@ In this game you have a Player and Enemies (Bugs). The goal of the player is to 
 
 ## How to run
 
-Open index.html
+[a link](https://thakursachin467.github.io/arcade-game/)
 then use the left,right,up and down key to move the respective places and reach water without colliding the GOOD bugs with the BAD ones.
